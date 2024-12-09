@@ -111,6 +111,21 @@ def rug_pull():
     # Logic to simulate rug pull (e.g., transfer all tokens to destination_wallet)
     return jsonify({"message": "Rug pull successful."}), 200
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+@app.route('/connect_wallet', methods=['GET'])
+def connect_wallet():
+    try:
+        wallet_address = "DemoWallet12345678"
+        wallet_data["connected_wallet"] = wallet_address
+        logging.info(f"Wallet connected: {wallet_address}")
+        return jsonify({"wallet_address": wallet_address}), 200
+    except Exception as e:
+        logging.error(f"Error connecting wallet: {e}")
+        return jsonify({"error": "Failed to connect wallet."}), 500
+
+
 
 import os
 
