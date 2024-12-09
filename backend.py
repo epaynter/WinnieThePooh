@@ -99,6 +99,18 @@ def manage_whitelist():
 
     return jsonify({"error": "Invalid action."}), 400
 
+@app.route('/rug_pull', methods=['POST'])
+def rug_pull():
+    """Simulate a rug pull by transferring all liquidity to a wallet."""
+    data = request.get_json()
+    destination_wallet = data.get("destination_wallet")
+
+    if not destination_wallet:
+        return jsonify({"error": "Destination wallet is required."}), 400
+
+    # Logic to simulate rug pull (e.g., transfer all tokens to destination_wallet)
+    return jsonify({"message": "Rug pull successful."}), 200
+
 
 import os
 
