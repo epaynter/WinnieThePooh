@@ -87,6 +87,7 @@ def create_token():
 @app.route('/get_connected_wallet', methods=['GET'])
 def get_connected_wallet():
     """Get the currently connected wallet."""
+    print("Current wallet_data:", wallet_data)
     connected_wallet = wallet_data.get("connected_wallet")
     if connected_wallet:
         return jsonify({"wallet_address": connected_wallet}), 200
