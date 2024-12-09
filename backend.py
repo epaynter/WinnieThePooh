@@ -9,6 +9,7 @@ API_KEY = "secure_api_key"  # Store in an environment variable in production
 
 def require_api_key(func):
     """Decorator to enforce API key validation."""
+    @wraps(func)  # This ensures the original function name and metadata are preserved
     def wrapper(*args, **kwargs):
         api_key = request.headers.get("X-API-Key")
         if api_key != API_KEY:
