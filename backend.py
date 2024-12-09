@@ -83,6 +83,22 @@ def connect_wallet():
     wallet_data["connected_wallet"] = wallet_address
     return jsonify({"wallet_address": wallet_address, "message": "Wallet connected successfully."}), 200
 
+@app.route('/whitelist', methods=['POST'])
+def manage_whitelist():
+    """Add or remove wallets from the whitelist."""
+    data = request.get_json()
+    action = data.get("action")  # "add" or "remove"
+    wallet_address = data.get("wallet_address")
+
+    if action == "add":
+        wallet_data.setdefault("whitelist", set()).add(wallet_address)
+        return jsonify({"message": f"{wallet_address} added to whitelist."}), 200
+    elif action == "remove":
+        wallet_data.get("whitelist", set()).discard(wallet_address)
+        return jsonify({"message": f"{wallet_address} removed from whitelist."}), 200
+
+    return jsonify({"error": "Invalid action."}), 400
+
 
 import os
 
