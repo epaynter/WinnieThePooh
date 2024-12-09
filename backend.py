@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from functools import wraps
 
 app = Flask(__name__)
 CORS(app)
@@ -14,6 +15,8 @@ def require_api_key(func):
             return jsonify({"error": "Unauthorized"}), 401
         return func(*args, **kwargs)
     return wrapper
+
+
 # Dummy in-memory database for demonstration purposes
 wallet_data = {}
 token_db = {
@@ -151,7 +154,13 @@ def connect_wallet():
             return jsonify({"message": "Wallet is connected.", "wallet_address": connected_wallet}), 200
         return jsonify({"error": "No wallet connected."}), 404
 
-
+@app.route('/list_routes', methods=['GET'])
+def list_routes():
+    """List all routes for debugging."""
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append(f"{rule.endpoint}: {rule.rule}")
+    return jsonify(routes), 200
 
 import os
 
