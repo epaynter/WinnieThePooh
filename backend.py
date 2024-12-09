@@ -108,26 +108,37 @@ def rug_pull():
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/connect_wallet', methods=['POST'])
+@app.route('/connect_wallet', methods=['GET', 'POST'])
 def connect_wallet():
-    """Handle Phantom wallet connection."""
-    try:
-        # Get wallet address from the frontend
-        data = request.get_json()
-        wallet_address = data.get("wallet_address")
+    print(f"Request method: {request.method}")  # Log the HTTP method
+    print(f"Request data: {request.get_json()}")  # Log the request payload
+    """Handle wallet connection."""
+    if request.method == 'POST':
+        try:
+            # Get wallet address from frontend
+            data = request.get_json()
+            wallet_address = data.get("wallet_address")
 
-        if not wallet_address:
-            return jsonify({"error": "Wallet address is required."}), 400
+            if not wallet_address:
+                return jsonify({"error": "Wallet address is required."}), 400
 
-        # Save the wallet address in the server (in-memory for now)
-        wallet_data["connected_wallet"] = wallet_address
+            # Save the wallet address in memory
+            wallet_data["connected_wallet"] = wallet_address
 
-        print(f"Wallet connected: {wallet_address}")  # Log for debugging
-        return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
+            print(f"Wallet connected: {wallet_address}")
+            return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
+        except Exception as e:
+            print(f"Error in connect_wallet: {e}")
+            return jsonify({"error": "Failed to connect wallet."}), 500
 
-    except Exception as e:
-        print(f"Error in connect_wallet: {e}")
-        return jsonify({"error": "Failed to connect wallet."}), 500
+    elif request.method == 'GET':
+        # Optionally return the currently connected wallet
+        connected_wallet = wallet_data.get("connected_wallet", None)
+        if connected_wallet:
+            return jsonify({"wallet_address": connected_wallet, "message": "Wallet is connected."}), 200
+        else:
+            return jsonify({"error": "No wallet connected."}), 404
+
 
 
 
@@ -137,5 +148,3 @@ import os
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-
