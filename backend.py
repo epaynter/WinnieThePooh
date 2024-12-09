@@ -108,16 +108,27 @@ def rug_pull():
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/connect_wallet', methods=['GET'])
+@app.route('/connect_wallet', methods=['POST'])
 def connect_wallet():
+    """Handle Phantom wallet connection."""
     try:
-        wallet_address = "DemoWallet12345678"
+        # Get wallet address from the frontend
+        data = request.get_json()
+        wallet_address = data.get("wallet_address")
+
+        if not wallet_address:
+            return jsonify({"error": "Wallet address is required."}), 400
+
+        # Save the wallet address in the server (in-memory for now)
         wallet_data["connected_wallet"] = wallet_address
-        logging.info(f"Wallet connected: {wallet_address}")
-        return jsonify({"wallet_address": wallet_address}), 200
+
+        print(f"Wallet connected: {wallet_address}")  # Log for debugging
+        return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
+
     except Exception as e:
-        logging.error(f"Error connecting wallet: {e}")
+        print(f"Error in connect_wallet: {e}")
         return jsonify({"error": "Failed to connect wallet."}), 500
+
 
 
 
