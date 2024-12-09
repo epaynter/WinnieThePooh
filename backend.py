@@ -131,34 +131,10 @@ def health_check():
     """Health check endpoint."""
     return jsonify({"status": "ok"}), 200
 
-'''@app.route('/connect_wallet', methods=['GET', 'POST'])
-def connect_wallet():
-    print(f"Request Headers: {request.headers}")  # Log headers
-    print(f"Request Data: {request.data}")  # Log raw request body
-    print(f"Content-Type: {request.content_type}")  # Log content type
-    """Handle wallet connection."""
-    if request.method == 'POST':
-        if not request.is_json:  # Check for JSON content type
-            return jsonify({"error": "Request must be JSON"}), 400
-
-        data = request.get_json()
-        wallet_address = data.get("wallet_address")
-        if not wallet_address:
-            return jsonify({"error": "Wallet address is required."}), 400
-
-        # Save wallet data
-        wallet_data["connected_wallet"] = wallet_address
-        return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
-
-    elif request.method == 'GET':  # Ensure this is correctly indented
-        connected_wallet = wallet_data.get("connected_wallet")
-        if connected_wallet:
-            return jsonify({"message": "Wallet is connected.", "wallet_address": connected_wallet}), 200
-        return jsonify({"error": "No wallet connected."}), 404
-'''
 @app.route('/connect_wallet', methods=['POST'])
 def connect_wallet():
     data = request.get_json()
+    print("connect_wallet called with data:", data)
     wallet_address = data.get("wallet_address")
     if wallet_address:
         wallet_data["connected_wallet"] = wallet_address
@@ -166,6 +142,11 @@ def connect_wallet():
         return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
     else:
         return jsonify({"error": "Wallet address is required."}), 400
+
+@app.route('/debug_wallet_data', methods=['GET'])
+def debug_wallet_data():
+    """Debug wallet data storage."""
+    return jsonify(wallet_data), 200
 
 
 @app.route('/list_routes', methods=['GET'])
