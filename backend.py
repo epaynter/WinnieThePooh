@@ -77,14 +77,6 @@ def get_connected_wallet():
     else:
         return jsonify({"error": "No wallet connected."}), 400
 
-
-@app.route('/connect_wallet', methods=['GET'])
-def connect_wallet():
-    """Simulate wallet connection."""
-    wallet_address = "DemoWallet12345678"  # Example wallet address for testing
-    wallet_data["connected_wallet"] = wallet_address
-    return jsonify({"wallet_address": wallet_address, "message": "Wallet connected successfully."}), 200
-
 @app.route('/whitelist', methods=['POST'])
 def manage_whitelist():
     """Add or remove wallets from the whitelist."""
