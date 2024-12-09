@@ -108,6 +108,11 @@ def rug_pull():
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    """Health check endpoint."""
+    return jsonify({"status": "ok"}), 200
+
 @app.route('/connect_wallet', methods=['GET', 'POST'])
 def connect_wallet():
     print(f"Request Headers: {request.headers}")  # Log headers
