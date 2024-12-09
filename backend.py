@@ -131,7 +131,7 @@ def health_check():
     """Health check endpoint."""
     return jsonify({"status": "ok"}), 200
 
-@app.route('/connect_wallet', methods=['GET', 'POST'])
+'''@app.route('/connect_wallet', methods=['GET', 'POST'])
 def connect_wallet():
     print(f"Request Headers: {request.headers}")  # Log headers
     print(f"Request Data: {request.data}")  # Log raw request body
@@ -155,6 +155,18 @@ def connect_wallet():
         if connected_wallet:
             return jsonify({"message": "Wallet is connected.", "wallet_address": connected_wallet}), 200
         return jsonify({"error": "No wallet connected."}), 404
+'''
+@app.route('/connect_wallet', methods=['POST'])
+def connect_wallet():
+    data = request.get_json()
+    wallet_address = data.get("wallet_address")
+    if wallet_address:
+        wallet_data["connected_wallet"] = wallet_address
+        print(f"Wallet connected: {wallet_address}")
+        return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
+    else:
+        return jsonify({"error": "Wallet address is required."}), 400
+
 
 @app.route('/list_routes', methods=['GET'])
 def list_routes():
