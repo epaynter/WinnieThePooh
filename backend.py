@@ -115,6 +115,9 @@ def connect_wallet():
     print(f"Content-Type: {request.content_type}")  # Log content type
     """Handle wallet connection."""
     if request.method == 'POST':
+        if not request.is_json:  # Check for JSON content type
+            return jsonify({"error": "Request must be JSON"}), 400
+
         data = request.get_json()
         wallet_address = data.get("wallet_address")
         if not wallet_address:
@@ -130,9 +133,6 @@ def connect_wallet():
             return jsonify({"message": "Wallet is connected.", "wallet_address": connected_wallet}), 200
         return jsonify({"error": "No wallet connected."}), 404
 
-
-if not request.is_json:
-    return jsonify({"error": "Request must be JSON"}), 400
 
 
 import os
