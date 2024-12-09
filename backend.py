@@ -108,41 +108,27 @@ def rug_pull():
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/connect_wallet', methods=['POST'])
+@app.route('/connect_wallet', methods=['GET', 'POST'])
 def connect_wallet():
     print(f"Request Headers: {request.headers}")  # Log headers
     print(f"Request Data: {request.data}")  # Log raw request body
     print(f"Content-Type: {request.content_type}")  # Log content type
-    """Handle Phantom wallet connection."""
-    try:
-        if request.content_type != 'application/json':
-            return jsonify({"error": "Content-Type must be application/json"}), 415  # 415 Unsupported Media Type
-
-        # Parse JSON data
+    """Handle wallet connection."""
+    if request.method == 'POST':
         data = request.get_json()
         wallet_address = data.get("wallet_address")
-
         if not wallet_address:
             return jsonify({"error": "Wallet address is required."}), 400
 
-        # Save the wallet address
+        # Save wallet data
         wallet_data["connected_wallet"] = wallet_address
-        print(f"Wallet connected: {wallet_address}")
         return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
 
-    except Exception as e:
-        print(f"Error in connect_wallet: {e}")
-        return jsonify({"error": "Failed to connect wallet."}), 500
-
-
-    elif request.method == 'GET':
-        # Optionally return the currently connected wallet
-        connected_wallet = wallet_data.get("connected_wallet", None)
+    elif request.method == 'GET':  # Ensure this is correctly indented
+        connected_wallet = wallet_data.get("connected_wallet")
         if connected_wallet:
-            return jsonify({"wallet_address": connected_wallet, "message": "Wallet is connected."}), 200
-        else:
-            return jsonify({"error": "No wallet connected."}), 404
-
+            return jsonify({"message": "Wallet is connected.", "wallet_address": connected_wallet}), 200
+        return jsonify({"error": "No wallet connected."}), 404
 
 
 if not request.is_json:
