@@ -22,11 +22,13 @@ def manage_wallet():
         if not wallet_address:
             return jsonify({"error": "Wallet address is required."}), 400
         wallet_data["connected_wallet"] = wallet_address
+        print(f"Wallet connected: {wallet_address}")
         return jsonify({"message": "Wallet connected successfully.", "wallet_address": wallet_address}), 200
 
     elif action == "disconnect":
         if "connected_wallet" in wallet_data:
             wallet_data.pop("connected_wallet", None)
+            print("Wallet disconnected.")
             return jsonify({"message": "Wallet disconnected successfully."}), 200
         return jsonify({"error": "No wallet connected."}), 400
 
