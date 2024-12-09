@@ -4,6 +4,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+API_KEY = "secure_api_key"  # Store in an environment variable in production
+
+def require_api_key(func):
+    """Decorator to enforce API key validation."""
+    def wrapper(*args, **kwargs):
+        api_key = request.headers.get("X-API-Key")
+        if api_key != API_KEY:
+            return jsonify({"error": "Unauthorized"}), 401
+        return func(*args, **kwargs)
+    return wrapper
 # Dummy in-memory database for demonstration purposes
 wallet_data = {}
 token_db = {
@@ -12,6 +22,7 @@ token_db = {
 }
 
 @app.route('/wallet', methods=['POST'])
+@require_api_key
 def manage_wallet():
     """Handle wallet connection or disconnection."""
     data = request.get_json()
@@ -51,6 +62,7 @@ def connect_phantom():
 
 
 @app.route('/create_token', methods=['POST'])
+@require_api_key
 def create_token():
     """Create a new token associated with the connected wallet."""
     data = request.get_json()
@@ -94,6 +106,7 @@ def manage_whitelist():
     return jsonify({"error": "Invalid action."}), 400
 
 @app.route('/rug_pull', methods=['POST'])
+@require_api_key
 def rug_pull():
     """Simulate a rug pull by transferring all liquidity to a wallet."""
     data = request.get_json()
