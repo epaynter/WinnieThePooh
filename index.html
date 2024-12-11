@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connect Phantom Wallet</title>
+</head>
+<body>
+    <button id="connect-wallet">Connect Phantom Wallet</button>
+    <p id="wallet-address">No Wallet Connected</p>
+    <script>
+        // Select elements
+        const connectWalletButton = document.getElementById('connect-wallet');
+        const walletAddressParagraph = document.getElementById('wallet-address');
+
+        // Connect Wallet Button Click Event
+        connectWalletButton.addEventListener('click', async () => {
+            try {
+                // Check if Phantom wallet is available
+                if (!window.solana || !window.solana.isPhantom) {
+                    alert("Phantom wallet is not installed! Please install it from https://phantom.app.");
+                    console.error("Phantom wallet is not detected.");
+                    return;
+                }
+
+                // Trigger the Phantom Wallet popup
+                const response = await window.solana.connect();
+                const walletAddress = response.publicKey.toString();
+                console.log("Connected Wallet Address:", walletAddress);
+
+                // Update the UI to show the connected wallet address
+                walletAddressParagraph.innerText = `Wallet Address: ${walletAddress}`;
+
+                // Send the wallet address to your backend
+                const backendResponse = await fetch("https://winniethepooh.onrender.com/connect_wallet", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-Key": "secure_api_key" // Replace with your actual API key
+                    },
+                    body: JSON.stringify({ wallet_address: walletAddress })
+                });
+                console.log("Sending wallet address to backend:", { wallet_address: walletAddress });
+
+                if (backendResponse.ok) {
+                    const data = await backendResponse.json();
+                    console.log("Backend Response:", data);
+                    alert("Wallet successfully connected!");
+                } else {
+                    const error = await backendResponse.json();
+                    console.error("Backend Error:", error);
+                    alert(`Error: ${error.error || "Unknown error"}`);
+                }
+            } catch (err) {
+                // Handle errors, such as user rejection
+                console.error("Failed to connect wallet:", err);
+                alert("Failed to connect wallet. Check console for details.");
+            }
+        });
+    </script>
+</body>
+</html>
